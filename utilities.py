@@ -7,9 +7,8 @@ import geopandas as gpd
 from datetime import date, timedelta
 
 import os
-token = os.environ.get('EARTHENGINE_TOKEN')
-geemap.ee_initialize(token)
-# print(os.environ.get("EARTHENGINE_TOKEN"))
+print(os.environ.get("EARTHENGINE_TOKEN"))
+
 
 def initialize_sessionState():
     if st.session_state.get("zoom_level") is None:
