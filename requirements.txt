@@ -1,5 +1,5 @@
 earthengine_api==0.1.286
-ee==0.4
+ee==0.2
 folium==0.12.1
 geemap==0.9.2
 geopandas==0.10.2
