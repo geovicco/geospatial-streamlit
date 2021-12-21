@@ -1,9 +1,7 @@
---find-links=https://girder.github.io/large_image_wheels GDAL
 geopandas
 numpy
 Shapely
 streamlit
-git+git://github.com/giswqs/leafmap
 git+git://github.com/giswqs/geemap
 folium
 streamlit-folium
