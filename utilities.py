@@ -8,7 +8,7 @@ from datetime import date, timedelta
 
 import os
 os.environ["EARTHENGINE_TOKEN"] = st.secrets["EARTHENGINE_TOKEN"]
-geemap.ee_initialize(st.secrets.EARTHENGINE_TOKEN)
+ee.Initialize(st.secrets.EARTHENGINE_TOKEN)
 
 # import json
 # f = open('./.ee_token')
