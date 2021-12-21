@@ -4,13 +4,13 @@ st.set_page_config(page_title='Land Surface Temperature', layout='wide')
 import utilities as ut
 import geemap.foliumap as geemap
 
-import os
-st.write(
-		"Has environment variables been set:",
-		os.environ["EARTHENGINE_TOKEN"] == st.secrets["EARTHENGINE_TOKEN"])
+# import os
+# st.write(
+# 		"Has environment variables been set:",
+# 		os.environ["EARTHENGINE_TOKEN"] == st.secrets["EARTHENGINE_TOKEN"])
 
-token = os.environ.get('EARTHENGINE_TOKEN')
-geemap.ee_initialize(token)
+# token = os.environ.get('EARTHENGINE_TOKEN')
+# geemap.ee_initialize(token)
 
 c1, c2, c3 = st.columns([1,8,1]); c2.title('  Land Surface Temperature Explorer')
 c1, c2, c3 = st.columns([1,8,1]); 
