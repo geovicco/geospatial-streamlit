@@ -5,6 +5,5 @@ email = \"geovicco@gmail.com\"
 echo "[server]
 headless = true
 port = $PORT
-enableCORS = false
-enableXsrfProtection=false
+enableCORS = true
 " > ~/.streamlit/config.toml

@@ -1,7 +1,6 @@
 geopandas
-numpy
 Shapely
 streamlit
-git+git://github.com/giswqs/geemap
-folium
+geemap
+earthengine-api
 streamlit-folium
