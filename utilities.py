@@ -6,13 +6,14 @@ import folium
 import geopandas as gpd
 from datetime import date, timedelta
 
-# os.environ["EARTHENGINE_TOKEN"] == st.secrets["EARTHENGINE_TOKEN"]
-# geemap.ee_initialize(st.secrets.EARTHENGINE_TOKEN)
+import os
+os.environ["EARTHENGINE_TOKEN"] == st.secrets["EARTHENGINE_TOKEN"]
+geemap.ee_initialize(st.secrets.EARTHENGINE_TOKEN)
 
-import json
-f = open('./.ee_token')
-ee_token = json.load(f)
-geemap.ee_initialize(ee_token)
+# import json
+# f = open('./.ee_token')
+# ee_token = json.load(f)
+# geemap.ee_initialize(ee_token)
 
 def initialize_sessionState():
     if st.session_state.get("zoom_level") is None:
