@@ -6,30 +6,9 @@ import folium
 import geopandas as gpd
 from datetime import date, timedelta
 
-# import os
-# os.environ["EARTHENGINE_TOKEN"] = st.secrets["EARTHENGINE_TOKEN"]
-# geemap.ee_initialize(st.secrets.EARTHENGINE_TOKEN)
-
-# import json
-# f = open('./.ee_token')
-# ee_token = json.load(f)
-# geemap.ee_initialize(ee_token)
-
-# import os
-# from pathlib import Path
-# import json
-
-# homeDir = Path.home()
-# if os.path.isfile(os.path.join(homeDir, ".config\earthengine\credentials")):
-#     f = open(os.path.join(homeDir, ".config\earthengine\credentials"))
-#     creds = json.load(f)
-    
-# EARTHENGINE_TOKEN = creds['refresh_token']
 import os
-# token = os.environ.get('EARTHENGINE_TOKEN')
-print("This is my secret key: " + str(os.environ.get("EARTHENGINE_TOKEN")))
-# geemap.ee_initialize
-# ee_initialize(token)
+token = os.environ.get('EARTHENGINE_TOKEN')
+ee.Initialize(token)
 
 def initialize_sessionState():
     if st.session_state.get("zoom_level") is None:
