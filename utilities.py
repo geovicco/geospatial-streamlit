@@ -7,7 +7,7 @@ import geopandas as gpd
 from datetime import date, timedelta
 
 import os
-os.environ["EARTHENGINE_TOKEN"] == st.secrets["EARTHENGINE_TOKEN"]
+os.environ["EARTHENGINE_TOKEN"] = st.secrets["EARTHENGINE_TOKEN"]
 geemap.ee_initialize(st.secrets.EARTHENGINE_TOKEN)
 
 # import json
