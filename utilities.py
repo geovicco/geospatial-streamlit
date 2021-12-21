@@ -9,7 +9,7 @@ from datetime import date, datetime, timedelta
 import os
 os.environ["EARTHENGINE_TOKEN"] == st.secrets["EARTHENGINE_TOKEN"]
     
-geemap.ee_initialize(os.environ["EARTHENGINE_TOKEN"])
+geemap.ee_initialize(st.secrets.EARTHENGINE_TOKEN)
 
 def initialize_sessionState():
     if st.session_state.get("zoom_level") is None:
