@@ -26,8 +26,10 @@ from datetime import date, timedelta
     
 # EARTHENGINE_TOKEN = creds['refresh_token']
 import os
-token = os.environ.get('EARTHENGINE_TOKEN')
-geemap.ee_initialize(token)
+# token = os.environ.get('EARTHENGINE_TOKEN')
+print("This is my secret key: " + str(os.environ.get("EARTHENGINE_TOKEN")))
+# geemap.ee_initialize
+# ee_initialize(token)
 
 def initialize_sessionState():
     if st.session_state.get("zoom_level") is None:
