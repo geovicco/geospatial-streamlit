@@ -7,7 +7,7 @@ import folium
 import geopandas as gpd
 from datetime import date, timedelta
 
-ee.Initialize()
+geemap.ee_initialize(st.secrets.get("EARTHENGINE_TOKEN"))
 
 def initialize_sessionState():
     if st.session_state.get("zoom_level") is None:
