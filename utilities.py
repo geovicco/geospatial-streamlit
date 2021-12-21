@@ -15,17 +15,19 @@ from datetime import date, timedelta
 # ee_token = json.load(f)
 # geemap.ee_initialize(ee_token)
 
-import os
-from pathlib import Path
-import json
+# import os
+# from pathlib import Path
+# import json
 
-homeDir = Path.home()
-if os.path.isfile(os.path.join(homeDir, ".config\earthengine\credentials")):
-    f = open(os.path.join(homeDir, ".config\earthengine\credentials"))
-    creds = json.load(f)
+# homeDir = Path.home()
+# if os.path.isfile(os.path.join(homeDir, ".config\earthengine\credentials")):
+#     f = open(os.path.join(homeDir, ".config\earthengine\credentials"))
+#     creds = json.load(f)
     
-EARTHENGINE_TOKEN = creds['refresh_token']
-geemap.ee_initialize(EARTHENGINE_TOKEN)
+# EARTHENGINE_TOKEN = creds['refresh_token']
+import os
+token = os.environ.get('EARTHENGINE_TOKEN')
+geemap.ee_initialize(token)
 
 def initialize_sessionState():
     if st.session_state.get("zoom_level") is None:
