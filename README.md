@@ -1,2 +1,2 @@
 # geospatial-streamlit
- Geospatial web application developed uisng earthengine, geemap, and streamlit.
+ Geospatial web applications developed uisng earthengine, geemap, and streamlit.
