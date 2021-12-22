@@ -216,6 +216,11 @@ def set_params():
     
 ################################################################################
 ############## LST Single Mono Window Algorithm ################################
+############# CITATION FOR THIS ALGORITHM ###############
+"""Ermida, S.L., Soares, P., Mantas, V., Göttsche, F.-M., Trigo, I.F., 2020. 
+    Google Earth Engine open-source code for Land Surface Temperature estimation from the Landsat series.
+    Remote Sensing, 12 (9), 1471; https://doi.org/10.3390/rs12091471
+"""
 # 1. Mask Clouds from TOA and SR Landsat Collection
 def maskL8srClouds(image):
     # Bits 3 and 5 are cloud shadow and cloud, respectively.
