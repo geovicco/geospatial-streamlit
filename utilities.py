@@ -189,7 +189,7 @@ def add_aoi_selector(mapObject):
 def set_params():
     with st.expander("Define Processing Parameters"):
         form = st.form(key='processing-params')
-        fromDate = form.date_input('Start Date', date.today() - timedelta(days=31))
+        fromDate = form.date_input('Start Date', date.today() - timedelta(days=366))
         toDate = form.date_input('End Date', date.today()-timedelta(days=1))
         useNDVI = form.checkbox("Use NDVI", False)
         satellite = form.radio("", [
@@ -200,7 +200,7 @@ def set_params():
             ], index=3)     
                    
         # Date Validation Check
-        if toDate - fromDate < timedelta(days=15):
+        if toDate - fromDate < timedelta(days=60):
             st.error('Difference between the two selected data is too small. Try again!')
             st.stop()
         else:
