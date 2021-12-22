@@ -8,7 +8,7 @@ from datetime import date, timedelta
 
 def initialize_sessionState():
     if st.session_state.get("zoom_level") is None:
-        st.session_state["zoom_level"] = 3
+        st.session_state["zoom_level"] = 4
     if st.session_state.get("aoi") is None:
         st.session_state["aoi"] = 'Not Selected'
     if st.session_state.get("useNDVI") is None:
