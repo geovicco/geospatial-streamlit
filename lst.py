@@ -612,7 +612,6 @@ def showLST(mapObject, state):
     
         
 ####### MAIN APPLICATION #######
-import utilities as ut
 
 c1, c2, c3 = st.columns([1,8,1]); c2.title('  Land Surface Temperature Explorer')
 c1, c2, c3 = st.columns([1,8,1]); 
@@ -631,7 +630,8 @@ initialize_sessionState()
 
 with row1_col1:
     # INITIALIZE MAP
-    m = geemap.Map(plugin_Draw=True, draw_export=True, add_google_map = False)
+    # m = leafmap.Map(height="400px", width="800px)
+    m = geemap.Map(plugin_Draw=True, draw_export=True)
     m.setCenter(76,22, 5)
     # m.add_basemap("SATELLITE")
 
@@ -655,4 +655,6 @@ with row1_col1:
                 st.write("Running LST SMW Algorithm")
             else:
                 st.info("Define Processing Paramaters to Proceed")        
+    print(st.session_state)
     m.to_streamlit(height=600, width=1000)
+    # 1440p monitor # (height=900, width=1350)
