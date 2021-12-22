@@ -586,8 +586,8 @@ def showLST(mapObject, state):
     useNDVI = state.useNDVI
     
     LandsatColl = getLSTCollection(satellite, start, end, aoi, useNDVI)
-    # Select the mean of the Landsat LST Image Collection 
-    exImage = LandsatColl.mean()
+    # Covert Landsat LST Image Collection to Image 
+    exImage = LandsatColl.qualityMosaic('LST')
     # Define Colormap for Visualization
     cmap1 = ['blue', 'cyan', 'green', 'yellow', 'red']
     
@@ -596,11 +596,11 @@ def showLST(mapObject, state):
     lst_min = gmap.image_stats(exImage, aoi, scale=1000).getInfo()['min']['LST']
     lst_max = gmap.image_stats(exImage, aoi, scale=1000).getInfo()['max']['LST']
     lst_std = gmap.image_stats(exImage, aoi, scale=1000).getInfo()['std']['LST']
-    
+    mapObject.addLayer(exImage.multiply(0.0001).clip(aoi),{'bands': ['B4',  'B3',  'B2'], 'min':0, 'max':0.3}, 'Natural Color RGB')
     mapObject.addLayer(lst_img,{'min':lst_min- 2.5*lst_std, 'max':lst_max, 'palette':cmap1}, 'LST')
     
     vmin = (lst_min- 2.5*lst_std) - 273.15
     vmax = lst_max - 273.15
     caption = 'Land Surface Temperature (Celsius)'
-
+    
     mapObject.add_colorbar(colors=cmap1, vmin=vmin, vmax=round(vmax, 2), caption=caption)
