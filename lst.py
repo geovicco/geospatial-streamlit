@@ -40,8 +40,11 @@ with row1_col1:
             
             # If the user has submitted the processing form, then run the algorithm
             if sessionState['FormSubmitter:processing-params-Submit']:
-                # Run Algorithm
-                ut.showLST(mapObject=m, state=sessionState)
+                try:
+                    # Run Algorithm
+                    ut.showLST(mapObject=m, state=sessionState)
+                except KeyError:
+                    st.warning("LST for selected dates could not be computed. Set longer time duration!")
             else:
                 st.info("Define Processing Paramaters to Proceed")        
 
