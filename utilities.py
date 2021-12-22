@@ -189,7 +189,7 @@ def add_aoi_selector(mapObject):
 def set_params():
     with st.expander("Define Processing Parameters"):
         form = st.form(key='processing-params')
-        fromDate = form.date_input('Start Date', date.today() - timedelta(days=3))
+        fromDate = form.date_input('Start Date', date.today() - timedelta(days=31))
         toDate = form.date_input('End Date', date.today()-timedelta(days=1))
         useNDVI = form.checkbox("Use NDVI", False)
         satellite = form.radio("", [
@@ -200,8 +200,8 @@ def set_params():
             ], index=3)     
                    
         # Date Validation Check
-        if toDate - fromDate < timedelta(days=1):
-            st.error('Incorrect End Date! Try Again')
+        if toDate - fromDate < timedelta(days=15):
+            st.error('Difference between the two selected data is too small. Try again!')
             st.stop()
         else:
             submit = form.form_submit_button('Submit')
@@ -213,7 +213,6 @@ def set_params():
             st.session_state['satellite'] = satellite
             
         return st.session_state
-    
     
 ################################################################################
 ############## LST Single Mono Window Algorithm ################################

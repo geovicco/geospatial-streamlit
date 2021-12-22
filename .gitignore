@@ -2,3 +2,8 @@
 .ee_token
 packages.txt
 __pycache__/utilities.cpython-38.pyc
+setup.sh
+runtime.txt
+app.py
+config_vars.py
+Procfile
