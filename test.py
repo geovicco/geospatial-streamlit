@@ -651,8 +651,8 @@ with row1_col1:
             # If the user has submitted the processing form, then run the algorithm
             if sessionState['FormSubmitter:processing-params-Submit']:
                 # Run Algorithm
-                # showLST(mapObject=m, state=sessionState)
-                st.write("Running LST SMW Algorithm")
+                showLST(mapObject=m, state=sessionState)
+                # st.write("Running LST SMW Algorithm")
             else:
                 st.info("Define Processing Paramaters to Proceed")        
     print(st.session_state)
