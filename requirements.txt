@@ -2,5 +2,6 @@ geopandas
 Shapely
 streamlit
 geemap
+leafmap
 earthengine-api
 streamlit-folium
