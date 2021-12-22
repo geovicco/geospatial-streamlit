@@ -21,8 +21,7 @@ ut.initialize_sessionState()
 
 with row1_col1:
     # INITIALIZE MAP
-    # m = leafmap.Map(height="400px", width="800px)
-    m = geemap.Map(plugin_Draw=True, draw_export=True)
+    m = geemap.Map(plugin_Draw=True, draw_export=True, add_google_map=False)
     m.setCenter(76,22, 5)
     # m.add_basemap("SATELLITE")
 
