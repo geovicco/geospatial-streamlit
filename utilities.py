@@ -608,7 +608,9 @@ def showLST(mapObject, state):
     LandsatLSTCol = getLSTCollection(satellite, start, end, aoi, useNDVI)
     # Covert Landsat LST Image Collection to Image 
     # Sort by a cloud cover property, get the least cloudy image.
-    image = ee.Image(LandsatLSTCol.sort('CLOUD_COVER').first())
+    # image = ee.Image(LandsatLSTCol.sort('CLOUD_COVER').first())
+    # Get Mosaic Image between Selected Data
+    image = LandsatLSTCol.qualityMosaic('LST')
     # Define Colormap for Visualization
     cmap1 = ['blue', 'cyan', 'green', 'yellow', 'red']
     
