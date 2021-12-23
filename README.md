@@ -9,7 +9,6 @@ The code has been adopted from the 2020 paper by Sofia Ermida and colleagues for
 
 Web App: https://share.streamlit.io/geovicco/geospatial-streamlit/main/lst.py 
 
-Demo: 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/eaO3s9LlXfI" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
 
 Algorithm Citation: Ermida, S.L., Soares, P., Mantas, V., Göttsche, F.-M., Trigo, I.F., 2020. Google Earth Engine open-source code for Land Surface Temperature estimation from the Landsat series. Remote Sensing, 12 (9), 1471; https://doi.org/10.3390/rs12091471
