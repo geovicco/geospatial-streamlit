@@ -542,9 +542,24 @@ def getLSTCollection(landsat, date_start, date_end, geometry, use_ndvi):
         'Landsat 8': {
             'TOA': ee.ImageCollection('LANDSAT/LC08/C01/T1_TOA'),
             'SR': ee.ImageCollection('LANDSAT/LC08/C01/T1_SR'),
-            'TIR': ['B10','B11']
-        }
-    })
+            'TIR': ['B10','B11'],
+            'RGB_OPTS': {
+                # https://www.esri.com/arcgis-blog/products/product/imagery/band-combinations-for-landsat-8/
+                'Natural Color': [4, 3, 2],
+                'False Color Infrared': [5, 4, 3],
+                'Shortwave Infrared (SWIR)': [7, 5, 4],
+                'Shortwave Infrared (SWIR; Narrow NIR)': [7, 6, 4],
+                'Vegetation Analysis': [6, 5, 4],
+                'Agriculture': [6, 5, 2],
+                'Geology': [7, 6, 2],
+                'Bathymetric': [4, 3, 1],
+                'Atmospheric Penetration': [7, 6, 5],
+                'Healthy Vegetation': [5, 6, 2],
+                'Land/Water': [5, 6, 4],
+                'Natural Color (Atmosphere Removed)': [7, 5, 3]
+                } 
+            }
+        })
 
     # load TOA Radiance/Reflectance
     collection_dict = ee.Dictionary(COLLECTION.get(landsat))
