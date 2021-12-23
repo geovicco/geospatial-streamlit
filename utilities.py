@@ -520,7 +520,7 @@ def addLST(landsat):
     return image.addBands(lst.rename('LST'))
   return wrap
 
-def getLSTCollection(landsat, date_start, date_end, geometry, use_ndvi):
+def getLSTCollection(landsat, date_start, date_end, geometry, use_ndvi, cloudCover):
     
     COLLECTION = ee.Dictionary({
         'Landsat 4': {
@@ -557,6 +557,7 @@ def getLSTCollection(landsat, date_start, date_end, geometry, use_ndvi):
     landsatSR = ee.ImageCollection(collection_dict.get('SR')) \
                     .filter(ee.Filter.date(date_start, date_end)) \
                     .filterBounds(geometry) \
+                    .filter(ee.Filter.lt('CLOUD_COVER', cloudCover)) \
                     .map(maskL8srClouds) \
                     .map(addNDVI(landsat)) \
                     .map(addFVC(landsat)) \
@@ -605,7 +606,7 @@ def showLST(mapObject, state):
     aoi = state.aoi
     useNDVI = state.useNDVI
     
-    LandsatLSTCol = getLSTCollection(satellite, start, end, aoi, useNDVI)
+    LandsatLSTCol = getLSTCollection(satellite, start, end, aoi, useNDVI, cloudCover=25)
     # Covert Landsat LST Image Collection to Image 
     # Sort by a cloud cover property, get the least cloudy image.
     # image = ee.Image(LandsatLSTCol.sort('CLOUD_COVER').first())
