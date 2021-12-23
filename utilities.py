@@ -579,6 +579,7 @@ def getLSTCollection(landsat, date_start, date_end, geometry, use_ndvi):
 ############## END of SMW LST ALGORITHM ########################################
 
 def getBands_RGB(landsat):
+    # https://www.usgs.gov/media/images/common-landsat-band-rgb-composites
     COLLECTION = ee.Dictionary({
         'Landsat 4': {
             'RGB_BANDS': ['B3', 'B2', 'B1']
