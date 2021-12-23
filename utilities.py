@@ -605,19 +605,20 @@ def showLST(mapObject, state):
     aoi = state.aoi
     useNDVI = state.useNDVI
     
-    LandsatColl = getLSTCollection(satellite, start, end, aoi, useNDVI)
+    LandsatLSTCol = getLSTCollection(satellite, start, end, aoi, useNDVI)
     # Covert Landsat LST Image Collection to Image 
-    exImage = LandsatColl.qualityMosaic('LST')
+    # Sort by a cloud cover property, get the least cloudy image.
+    image = ee.Image(LandsatLSTCol.sort('CLOUD_COVER').first())
     # Define Colormap for Visualization
     cmap1 = ['blue', 'cyan', 'green', 'yellow', 'red']
     
-    lst_img = exImage.select('LST').clip(aoi)
+    lst_img = image.select('LST').clip(aoi)
     rgb_bands = getBands_RGB(satellite)
     
-    lst_min = gmap.image_stats(exImage, aoi, scale=1000).getInfo()['min']['LST']
-    lst_max = gmap.image_stats(exImage, aoi, scale=1000).getInfo()['max']['LST']
-    lst_std = gmap.image_stats(exImage, aoi, scale=1000).getInfo()['std']['LST']
-    mapObject.addLayer(exImage.multiply(0.0001).clip(aoi),{'bands': rgb_bands, 'min':0, 'max':0.3}, 'Natural Color RGB')
+    lst_min = gmap.image_stats(image, aoi, scale=1000).getInfo()['min']['LST']
+    lst_max = gmap.image_stats(image, aoi, scale=1000).getInfo()['max']['LST']
+    lst_std = gmap.image_stats(image, aoi, scale=1000).getInfo()['std']['LST']
+    mapObject.addLayer(image.multiply(0.0001).clip(aoi),{'bands': rgb_bands, 'min':0, 'max':0.3}, 'Natural Color RGB')
     mapObject.addLayer(lst_img,{'min':lst_min- 2.5*lst_std, 'max':lst_max, 'palette':cmap1}, 'LST')
     
     vmin = (lst_min - 2.5*lst_std) - 273.15
