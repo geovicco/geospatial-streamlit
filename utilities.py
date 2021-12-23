@@ -193,11 +193,10 @@ def set_params():
         toDate = form.date_input('End Date', date.today()-timedelta(days=1))
         useNDVI = form.checkbox("Use NDVI", False)
         satellite = form.radio("", [
-                "Landsat 4",
                 "Landsat 5",
                 "Landsat 7",
                 "Landsat 8"
-            ], index=3)     
+            ], index=2)     
                    
         # Date Validation Check
         if toDate - fromDate < timedelta(days=30):
