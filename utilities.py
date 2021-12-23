@@ -614,7 +614,7 @@ def showLST(mapObject, state):
     mapObject.addLayer(exImage.multiply(0.0001).clip(aoi),{'bands': ['B4',  'B3',  'B2'], 'min':0, 'max':0.3}, 'Natural Color RGB')
     mapObject.addLayer(lst_img,{'min':lst_min- 2.5*lst_std, 'max':lst_max, 'palette':cmap1}, 'LST')
     
-    vmin = (lst_min- 2.5*lst_std) - 273.15
+    vmin = (lst_min - 2.5*lst_std) - 273.15
     vmax = lst_max - 273.15
     caption = 'Land Surface Temperature (Celsius)'
     
