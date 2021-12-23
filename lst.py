@@ -44,8 +44,8 @@ with row1_col1:
                     # Run Algorithm
                     ut.showLST(mapObject=m, state=sessionState)
                 except KeyError:
+                    st.sessionState['FormSubmitter:processing-params-Submit'] = False
                     st.warning("LST for selected dates could not be computed. Set longer time duration!")
-                    sessionState['FormSubmitter:processing-params-Submit'] == False
             else:
                 st.info("Define Processing Paramaters to Proceed")        
 
