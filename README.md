@@ -8,6 +8,7 @@ A simple, code-free way to visualize Land Surface Temperature for anywhere on th
 The code has been adopted from the 2020 paper by Sofia Ermida and colleagues for estimating LST using Single Mono Window (SMW) algorithm.
 
 Web App: https://share.streamlit.io/geovicco/geospatial-streamlit/main/lst.py 
+![thumbnail_lst_demo_kolkata](https://user-images.githubusercontent.com/71774828/147178951-8e609072-df23-491c-a7e8-08993c5f6103.png)
 
 
 
