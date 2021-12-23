@@ -527,12 +527,12 @@ def getLSTCollection(landsat, date_start, date_end, geometry, use_ndvi):
         'Landsat 4': {
         'TOA': ee.ImageCollection('LANDSAT/LT04/C01/T1_TOA'),
         'SR': ee.ImageCollection('LANDSAT/LT04/C01/T1_SR'),
-        'TIR': ['B6',]
+        'TIR': ['B6'],
         },
         'Landsat 5': {
             'TOA': ee.ImageCollection('LANDSAT/LT05/C01/T1_TOA'),
             'SR': ee.ImageCollection('LANDSAT/LT05/C01/T1_SR'),
-            'TIR': ['B6',]
+            'TIR': ['B6'],
         },
         'Landsat 7': {
             'TOA': ee.ImageCollection('LANDSAT/LE07/C01/T1_TOA'),
@@ -543,21 +543,6 @@ def getLSTCollection(landsat, date_start, date_end, geometry, use_ndvi):
             'TOA': ee.ImageCollection('LANDSAT/LC08/C01/T1_TOA'),
             'SR': ee.ImageCollection('LANDSAT/LC08/C01/T1_SR'),
             'TIR': ['B10','B11'],
-            'RGB_OPTS': {
-                # https://www.esri.com/arcgis-blog/products/product/imagery/band-combinations-for-landsat-8/
-                'Natural Color': [4, 3, 2],
-                'False Color Infrared': [5, 4, 3],
-                'Shortwave Infrared (SWIR)': [7, 5, 4],
-                'Shortwave Infrared (SWIR; Narrow NIR)': [7, 6, 4],
-                'Vegetation Analysis': [6, 5, 4],
-                'Agriculture': [6, 5, 2],
-                'Geology': [7, 6, 2],
-                'Bathymetric': [4, 3, 1],
-                'Atmospheric Penetration': [7, 6, 5],
-                'Healthy Vegetation': [5, 6, 2],
-                'Land/Water': [5, 6, 4],
-                'Natural Color (Atmosphere Removed)': [7, 5, 3]
-                } 
             }
         })
 
@@ -588,9 +573,29 @@ def getLSTCollection(landsat, date_start, date_end, geometry, use_ndvi):
 
     # compute the LST
     landsatLST = landsatALL.map(addLST(landsat))
+    
     return landsatLST
 ################################################################################
 ############## END of SMW LST ALGORITHM ########################################
+
+def getBands_RGB(landsat):
+    COLLECTION = ee.Dictionary({
+        'Landsat 4': {
+            'RGB_BANDS': ['B3', 'B2', 'B1']
+        },
+        'Landsat 5': {
+            'RGB_BANDS': ['B3', 'B2', 'B1']
+        },
+        'Landsat 7': {
+            'RGB_BANDS': ['B3', 'B2', 'B1']
+        },
+        'Landsat 8': {
+            'RGB_BANDS': ['B4', 'B3', 'B2']
+            }
+        })
+    collection_dict = ee.Dictionary(COLLECTION.get(landsat))
+    rgb_bands = collection_dict.get('RGB_BANDS').getInfo()
+    return rgb_bands
 
 def showLST(mapObject, state): 
     # Get Parameters from State
@@ -607,11 +612,12 @@ def showLST(mapObject, state):
     cmap1 = ['blue', 'cyan', 'green', 'yellow', 'red']
     
     lst_img = exImage.select('LST').clip(aoi)
+    rgb_bands = getBands_RGB(satellite)
     
     lst_min = gmap.image_stats(exImage, aoi, scale=1000).getInfo()['min']['LST']
     lst_max = gmap.image_stats(exImage, aoi, scale=1000).getInfo()['max']['LST']
     lst_std = gmap.image_stats(exImage, aoi, scale=1000).getInfo()['std']['LST']
-    mapObject.addLayer(exImage.multiply(0.0001).clip(aoi),{'bands': ['B4',  'B3',  'B2'], 'min':0, 'max':0.3}, 'Natural Color RGB')
+    mapObject.addLayer(exImage.multiply(0.0001).clip(aoi),{'bands': rgb_bands, 'min':0, 'max':0.3}, 'Natural Color RGB')
     mapObject.addLayer(lst_img,{'min':lst_min- 2.5*lst_std, 'max':lst_max, 'palette':cmap1}, 'LST')
     
     vmin = (lst_min - 2.5*lst_std) - 273.15
