@@ -655,4 +655,4 @@ def export(mapObject, state):
   img = state.lst_img
   with st.expander("Save Output"):
       st.download_button(label='To HTML', data=mapObject.to_html())
-      st.download_button(label = 'To GeoTIFF', filename='LST.tif', data=geemap.ee_export_image(img, scale=90, region=state.aoi.geometry()))
+      st.download_button(label = 'To GeoTIFF', data=geemap.ee_export_image(img, scale=90, filename='LST.tif', region=state.aoi.geometry()))
