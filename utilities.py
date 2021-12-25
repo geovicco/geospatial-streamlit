@@ -97,11 +97,12 @@ def add_aoi_selector(mapObject):
                 gdf['center'] = gdf.centroid
                 gdf['lon'] = gdf.center.apply(lambda p: p.x)
                 gdf['lat'] = gdf.center.apply(lambda p: p.y)
-                lon = gdf.lon.mean()
-                lat = gdf.lat.mean()
+                st.session_state.lon = gdf.lon.mean()
+                st.session_state.lat = gdf.lat.mean()
                 zoomLevel = 10
                 mapObject.addLayer(ee_obj, {}, 'AOI')
-                mapObject.set_center(lon, lat, zoomLevel)
+                mapObject.set_center(st.session_state.lon, st.session_state.lat, zoomLevel)
+                # mapObject.set_center(lon, lat, zoomLevel)
                 st.session_state["aoi"] = ee_obj # Saving AOI to Session State
         elif option == optionsList[0]:
             ee_asset_search = st.text_input("Search EarthEngine FeatureCollection Asset", "")
@@ -148,7 +149,9 @@ def add_aoi_selector(mapObject):
                     }, crs="EPSG:4326")
                     area = gdf_bounds.area.values[0]
                     center = gdf_bounds.centroid
-                    center_lon = float(center.x); center_lat = float(center.y)
+                    # center_lon = float(center.x); center_lat = float(center.y)
+                    st.session_state.lon = float(center.x)
+                    st.session_state.lat = float(center.y)
 
                     if area > 5:
                         zoomLevel = 8
@@ -158,9 +161,11 @@ def add_aoi_selector(mapObject):
                         zoomLevel = 11
                     else:
                         zoomLevel = 13
-                    print(area, zoomLevel)
-                    mapObject.addLayer(ee_obj, {}, 'aoi')
-                    mapObject.set_center(center_lon, center_lat, zoomLevel)
+                    
+                    # print(area, zoomLevel)
+                    # mapObject.addLayer(ee_obj, {}, 'aoi')
+                    mapObject.set_center(st.session_state.lon, st.session_state.lat, zoomLevel)
+                    # mapObject.set_center(center_lon, center_lat, zoomLevel)
                     st.session_state["aoi"] = ee_obj
                 elif uploaded_file is None:
                     pass
@@ -177,7 +182,9 @@ def add_aoi_selector(mapObject):
 
                     area = gdf_bounds.area.values[0]
                     center = gdf_bounds.centroid
-                    center_lon = float(center.x); center_lat = float(center.y)
+                    # center_lon = float(center.x); center_lat = float(center.y)
+                    st.session_state.lon = float(center.x)
+                    st.session_state.lat = float(center.y)
 
                     if area > 5:
                         zoomLevel = 8
@@ -191,13 +198,14 @@ def add_aoi_selector(mapObject):
                         zoomLevel = 13
                     print(area, zoomLevel)
                     mapObject.addLayer(ee_obj, {}, 'aoi')
-                    mapObject.set_center(center_lon, center_lat, zoomLevel)
+                    mapObject.set_center(st.session_state.lon, st.session_state.lat, zoomLevel)
+                    # mapObject.set_center(center_lon, center_lat, zoomLevel)
                     st.session_state["aoi"] = ee_obj
     
 def set_params():
     with st.expander("Define Processing Parameters"):
         form = st.form(key='processing-params')
-        fromDate = form.date_input('Start Date', date.today() - timedelta(days=61))
+        fromDate = form.date_input('Start Date', date.today() - timedelta(days=366))
         toDate = form.date_input('End Date', date.today()-timedelta(days=1))
         cloudCover = form.number_input(label="Cloud Cover Threshold (%)", min_value=0, max_value=50, value=5, step=5)
         satellite = form.selectbox("Landsat Satellite", [
@@ -207,7 +215,7 @@ def set_params():
             ], index=2)
 
         # Date Validation Check
-        if toDate - fromDate < timedelta(days=30):
+        if toDate - fromDate < timedelta(days=90):
             st.error('Difference between the two selected data is too small. Try again!')
             st.stop()
         else:
@@ -630,7 +638,6 @@ def showLST(mapObject, state):
     
     lst_mean = gmap.image_stats(image, aoi, scale=1000).getInfo()['mean']['LST'] 
     lst_min = gmap.image_stats(image, aoi, scale=1000).getInfo()['min']['LST']
-    lst_max = gmap.image_stats(image, aoi, scale=1000).getInfo()['max']['LST']
     lst_std = gmap.image_stats(image, aoi, scale=1000).getInfo()['std']['LST']
     mapObject.addLayer(image.multiply(0.0001).clip(aoi),{'bands': rgb_bands, 'min':0, 'max':0.3}, 'Natural Color RGB')
     mapObject.addLayer(lst_img,{'min':lst_min- 2.5*lst_std, 'max':lst_mean + 2.5*lst_std, 'palette':cmap1}, 'LST')
