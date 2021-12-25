@@ -13,6 +13,8 @@ def initialize_sessionState():
         st.session_state["aoi"] = 'Not Selected'
     if st.session_state.get("cloudCover") is None:
         st.session_state["cloudCover"] = 25
+    if st.session_state.get("useNDVI") is None:
+        st.session_state["useNDVI"] = True
 
 
 def add_geocoder(mapObject):
