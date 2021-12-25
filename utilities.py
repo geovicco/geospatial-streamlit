@@ -206,8 +206,6 @@ def set_params():
                 "Landsat 8"
             ], index=2)
 
-        opt = form.selectbox(label = 'Select Export Option', options = ['None', 'GeoTIFF', 'HTML'])     
-                   
         # Date Validation Check
         if toDate - fromDate < timedelta(days=30):
             st.error('Difference between the two selected data is too small. Try again!')
@@ -220,7 +218,6 @@ def set_params():
             st.session_state["toDate"] = toDate
             st.session_state["cloudCover"] = cloudCover
             st.session_state['satellite'] = satellite
-            st.session_state['export_opt'] = opt
             
         return st.session_state
 
@@ -648,25 +645,7 @@ def showLST(mapObject, state):
     return st.session_state
 
 def export(mapObject, state):
-  opt = state.export_opt
-
-  import os
-  # Set Directory where Output will be Saved
-  download_dir = os.path.join(os.path.expanduser('~'), 'Downloads')
-  if not os.path.exists(download_dir):
-      os.makedirs(download_dir)
-  html_file = os.path.join(download_dir, 'LST.html')
-  tiff_file = os.path.join(download_dir, 'LST.tif')
-
-  if opt == 'GeoTIFF':
-    st.write(f'Output File Location: {tiff_file}')
-    st.warning('This may take a few seconds to process!')
-    st.warning('Note: Output LST raster has temperature units in Kelvin.')
-    return geemap.ee_export_image(state.lst_img, filename=tiff_file, scale=30, region=state.aoi.geometry(), file_per_band=False)
-
-  elif opt == 'HTML': 
-    st.write(f'Output File Location: {html_file}')
-    return mapObject.to_html(outfile=html_file, width='100%', height='100%', title='Landsat LST Map')
-  
-  else:
-    st.write('Output Not Saved.')
+  img = state.lst_img
+  with st.expander("Save Output"):
+      st.download_button(label='To HTML', data=mapObject.to_html())
+      st.download_button(label = 'To GeoTIFF', data=img)
