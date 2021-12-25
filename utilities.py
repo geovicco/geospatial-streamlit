@@ -9,10 +9,6 @@ from datetime import date, timedelta
 def initialize_sessionState():
     if st.session_state.get("zoom_level") is None:
         st.session_state["zoom_level"] = 4
-    if st.session_state.get("lat") is None:
-        st.session_state["lat"] = 22
-    if st.session_state.get("lon") is None:
-        st.session_state["lon"] = 76
     if st.session_state.get("aoi") is None:
         st.session_state["aoi"] = 'Not Selected'
     if st.session_state.get("useNDVI") is None:
@@ -30,11 +26,11 @@ def add_geocoder(mapObject):
                 location = st.selectbox("Select a location:", str_locations)
                 loc_index = str_locations.index(location)
                 selected_loc = locations[loc_index]
-                st.session_state['lat'] =  selected_loc.lat
-                st.session_state['lon'] =  selected_loc.lng
+                lat =  selected_loc.lat
+                lon =  selected_loc.lng
 
-                folium.Marker(location=[st.session_state.lat, st.session_state.lon], popup=location).add_to(mapObject)
-                mapObject.set_center(st.session_state.lon, st.session_state.lat, 13)
+                folium.Marker(location=[lat, lon], popup=location).add_to(mapObject)
+                mapObject.set_center(lon, lat, 13)
                 st.session_state["zoom_level"] = 13
         
         else:
@@ -45,11 +41,10 @@ def add_geocoder(mapObject):
                 location = str_locations[0]
                 loc_index = str_locations.index(location)
                 selected_loc = locations[loc_index]
-                st.session_state['lat'] =  selected_loc.lat
-                st.session_state['lon'] =  selected_loc.lng
-                # lat, lng = selected_loc.lat, selected_loc.lng
-                folium.Marker(location=[st.session_state.lat, st.session_state.lon], popup=None).add_to(mapObject)
-                mapObject.set_center(st.session_state.lon, st.session_state.lat, 16)
+                lat =  selected_loc.lat
+                lon =  selected_loc.lng
+                folium.Marker(location=[lat, lon], popup=None).add_to(mapObject)
+                mapObject.set_center(lon, lat, 16)
                 st.session_state["zoom_level"] = 16
 
 def uploaded_file_to_gdf(data, crs):
@@ -97,12 +92,11 @@ def add_aoi_selector(mapObject):
                 gdf['center'] = gdf.centroid
                 gdf['lon'] = gdf.center.apply(lambda p: p.x)
                 gdf['lat'] = gdf.center.apply(lambda p: p.y)
-                st.session_state.lon = gdf.lon.mean()
-                st.session_state.lat = gdf.lat.mean()
+                lon = gdf.lon.mean()
+                lat = gdf.lat.mean()
                 zoomLevel = 10
                 mapObject.addLayer(ee_obj, {}, 'AOI')
-                mapObject.set_center(st.session_state.lon, st.session_state.lat, zoomLevel)
-                # mapObject.set_center(lon, lat, zoomLevel)
+                mapObject.set_center(lon, lat, zoomLevel)
                 st.session_state["aoi"] = ee_obj # Saving AOI to Session State
         elif option == optionsList[0]:
             ee_asset_search = st.text_input("Search EarthEngine FeatureCollection Asset", "")
@@ -149,10 +143,8 @@ def add_aoi_selector(mapObject):
                     }, crs="EPSG:4326")
                     area = gdf_bounds.area.values[0]
                     center = gdf_bounds.centroid
-                    # center_lon = float(center.x); center_lat = float(center.y)
-                    st.session_state.lon = float(center.x)
-                    st.session_state.lat = float(center.y)
-
+                    center_lon = float(center.x); center_lat = float(center.y)
+                    
                     if area > 5:
                         zoomLevel = 8
                     elif area > 3:
@@ -163,9 +155,9 @@ def add_aoi_selector(mapObject):
                         zoomLevel = 13
                     
                     # print(area, zoomLevel)
-                    # mapObject.addLayer(ee_obj, {}, 'aoi')
-                    mapObject.set_center(st.session_state.lon, st.session_state.lat, zoomLevel)
-                    # mapObject.set_center(center_lon, center_lat, zoomLevel)
+                    mapObject.addLayer(ee_obj, {}, 'aoi')
+                    # mapObject.set_center(st.session_state.lon, st.session_state.lat, zoomLevel)
+                    mapObject.set_center(center_lon, center_lat, zoomLevel)
                     st.session_state["aoi"] = ee_obj
                 elif uploaded_file is None:
                     pass
@@ -182,10 +174,8 @@ def add_aoi_selector(mapObject):
 
                     area = gdf_bounds.area.values[0]
                     center = gdf_bounds.centroid
-                    # center_lon = float(center.x); center_lat = float(center.y)
-                    st.session_state.lon = float(center.x)
-                    st.session_state.lat = float(center.y)
-
+                    center_lon = float(center.x); center_lat = float(center.y)
+                    
                     if area > 5:
                         zoomLevel = 8
                     elif area > 3:
@@ -196,10 +186,9 @@ def add_aoi_selector(mapObject):
                         zoomLevel = 9
                     else:
                         zoomLevel = 13
-                    print(area, zoomLevel)
+                    
                     mapObject.addLayer(ee_obj, {}, 'aoi')
-                    mapObject.set_center(st.session_state.lon, st.session_state.lat, zoomLevel)
-                    # mapObject.set_center(center_lon, center_lat, zoomLevel)
+                    mapObject.set_center(center_lon, center_lat, zoomLevel)
                     st.session_state["aoi"] = ee_obj
     
 def set_params():
