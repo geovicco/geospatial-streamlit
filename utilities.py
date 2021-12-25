@@ -9,6 +9,10 @@ from datetime import date, timedelta
 def initialize_sessionState():
     if st.session_state.get("zoom_level") is None:
         st.session_state["zoom_level"] = 4
+    if st.session_state.get("lat") is None:
+        st.session_state["lat"] = 22
+    if st.session_state.get("lon") is None:
+        st.session_state["lon"] = 76
     if st.session_state.get("aoi") is None:
         st.session_state["aoi"] = 'Not Selected'
     if st.session_state.get("useNDVI") is None:
@@ -26,9 +30,11 @@ def add_geocoder(mapObject):
                 location = st.selectbox("Select a location:", str_locations)
                 loc_index = str_locations.index(location)
                 selected_loc = locations[loc_index]
-                lat, lng = selected_loc.lat, selected_loc.lng
-                folium.Marker(location=[lat, lng], popup=location).add_to(mapObject)
-                mapObject.set_center(lng, lat, 13)
+                st.session_state['lat'] =  selected_loc.lat
+                st.session_state['lon'] =  selected_loc.lng
+
+                folium.Marker(location=[st.session_state.lat, st.session_state.lon], popup=location).add_to(mapObject)
+                mapObject.set_center(st.session_state.lon, st.session_state.lat, 13)
                 st.session_state["zoom_level"] = 13
         
         else:
@@ -39,9 +45,11 @@ def add_geocoder(mapObject):
                 location = str_locations[0]
                 loc_index = str_locations.index(location)
                 selected_loc = locations[loc_index]
-                lat, lng = selected_loc.lat, selected_loc.lng
-                folium.Marker(location=[lat, lng], popup=None).add_to(mapObject)
-                mapObject.set_center(lng, lat, 16)
+                st.session_state['lat'] =  selected_loc.lat
+                st.session_state['lon'] =  selected_loc.lng
+                # lat, lng = selected_loc.lat, selected_loc.lng
+                folium.Marker(location=[st.session_state.lat, st.session_state.lon], popup=None).add_to(mapObject)
+                mapObject.set_center(st.session_state.lon, st.session_state.lat, 16)
                 st.session_state["zoom_level"] = 16
 
 def uploaded_file_to_gdf(data, crs):
