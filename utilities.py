@@ -614,7 +614,7 @@ def showLST(mapObject, state):
     # Sort by a cloud cover property, get the least cloudy image.
     # image = ee.Image(LandsatLSTCol.sort('CLOUD_COVER').first())
     
-    image = ee.Image(LandsatLSTCol.medina())
+    image = ee.Image(LandsatLSTCol.median())
     
     # Define Colormap for Visualization
     cmap1 = ['blue', 'cyan', 'green', 'yellow', 'red']
