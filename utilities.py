@@ -650,9 +650,3 @@ def showLST(mapObject, state):
     mapObject.add_colorbar(colors=cmap1, caption=caption, vmin=vmin, vmax=vmax)
     st.session_state['lst_img'] = lst_img
     return st.session_state
-
-def export(mapObject, state):
-  img = state.lst_img
-  with st.expander("Save Output"):
-      st.download_button(label='To HTML', data=mapObject.to_html())
-      st.download_button(label = 'To GeoTIFF', data=geemap.ee_export_image(img, scale=90, filename='LST.tif', region=state.aoi.geometry()))
