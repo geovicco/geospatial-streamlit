@@ -654,7 +654,7 @@ def export(mapObject, state):
     st.write(f'Output File Location: {tiff_file}')
     st.warning('This may take a few seconds to process!')
     st.warning('Note: Output LST raster has temperature units in Kelvin.')
-    return geemap.ee_export_image(state.lst_img, filename=tiff_file, scale=30, region=state.aoi.geometry(), file_per_band=False)
+    return geemap.ee_export_image(state.lst_img, filename=tiff_file, scale=90, region=state.aoi.geometry(), file_per_band=False)
 
   elif opt == 'HTML': 
     st.write(f'Output File Location: {html_file}')
