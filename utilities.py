@@ -11,8 +11,6 @@ def initialize_sessionState():
         st.session_state["zoom_level"] = 4
     if st.session_state.get("aoi") is None:
         st.session_state["aoi"] = 'Not Selected'
-    if st.session_state.get("cloudCover") is None:
-        st.session_state["cloudCover"] = 25
     if st.session_state.get("useNDVI") is None:
         st.session_state["useNDVI"] = True
 
@@ -191,7 +189,7 @@ def add_aoi_selector(mapObject):
 def set_params():
     with st.expander("Define Processing Parameters"):
         form = st.form(key='processing-params')
-        fromDate = form.date_input('Start Date', date.today() - timedelta(days=366))
+        fromDate = form.date_input('Start Date', date.today() - timedelta(days=61))
         toDate = form.date_input('End Date', date.today()-timedelta(days=1))
         cloudCover = form.number_input(label="Cloud Cover Threshold (%)", min_value=0, max_value=50, value=5, step=5)
         satellite = form.selectbox("Landsat Satellite", [
@@ -203,7 +201,7 @@ def set_params():
         opt = form.selectbox(label = 'Select Export Option', options = ['None', 'GeoTIFF', 'HTML'])     
                    
         # Date Validation Check
-        if toDate - fromDate < timedelta(days=90):
+        if toDate - fromDate < timedelta(days=30):
             st.error('Difference between the two selected data is too small. Try again!')
             st.stop()
         else:
@@ -217,7 +215,7 @@ def set_params():
             st.session_state['export_opt'] = opt
             
         return st.session_state
-    
+
 ################################################################################
 ############## LST Single Mono Window Algorithm ################################
 ############# CITATION FOR THIS ALGORITHM ###############
@@ -614,6 +612,9 @@ def showLST(mapObject, state):
     
     LandsatLSTCol = getLSTCollection(satellite, start, end, aoi, useNDVI, cloudCover)
     # Covert Landsat LST Image Collection to Image 
+    # Sort by a cloud cover property, get the least cloudy image.
+    # image = ee.Image(LandsatLSTCol.sort('CLOUD_COVER').first())
+    
     image = ee.Image(LandsatLSTCol.median())
     
     # Define Colormap for Visualization
@@ -626,7 +627,6 @@ def showLST(mapObject, state):
     lst_min = gmap.image_stats(image, aoi, scale=1000).getInfo()['min']['LST']
     lst_max = gmap.image_stats(image, aoi, scale=1000).getInfo()['max']['LST']
     lst_std = gmap.image_stats(image, aoi, scale=1000).getInfo()['std']['LST']
-    
     mapObject.addLayer(image.multiply(0.0001).clip(aoi),{'bands': rgb_bands, 'min':0, 'max':0.3}, 'Natural Color RGB')
     mapObject.addLayer(lst_img,{'min':lst_min- 2.5*lst_std, 'max':lst_mean + 2.5*lst_std, 'palette':cmap1}, 'LST')
     
@@ -636,5 +636,29 @@ def showLST(mapObject, state):
     caption = 'Land Surface Temperature (Celsius)'
     
     mapObject.add_colorbar(colors=cmap1, caption=caption, vmin=vmin, vmax=vmax)
+    st.session_state['lst_img'] = lst_img
+    return st.session_state
 
+def export(mapObject, state):
+  opt = state.export_opt
 
+  import os
+  # Set Directory where Output will be Saved
+  download_dir = os.path.join(os.path.expanduser('~'), 'Downloads')
+  if not os.path.exists(download_dir):
+      os.makedirs(download_dir)
+  html_file = os.path.join(download_dir, 'LST.html')
+  tiff_file = os.path.join(download_dir, 'LST.tif')
+
+  if opt == 'GeoTIFF':
+    st.write(f'Output File Location: {tiff_file}')
+    st.warning('This may take a few seconds to process!')
+    st.warning('Note: Output LST raster has temperature units in Kelvin.')
+    return geemap.ee_export_image(state.lst_img, filename=tiff_file, scale=30, region=state.aoi.geometry(), file_per_band=False)
+
+  elif opt == 'HTML': 
+    st.write(f'Output File Location: {html_file}')
+    return mapObject.to_html(outfile=html_file, width='100%', height='100%', title='Landsat LST Map')
+  
+  else:
+    st.write('Output Not Saved.')

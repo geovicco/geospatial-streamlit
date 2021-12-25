@@ -1,6 +1,6 @@
 import streamlit as st
 st.set_page_config(page_title='Land Surface Temperature', layout='wide')
-import geemap.foliumap as geemap
+import geemap.foliumap as geefmap
 import utilities as ut
         
 ####### MAIN APPLICATION #######
@@ -18,9 +18,10 @@ row1_col1, row1_col2 = st.columns([2, 1])
 
 ut.initialize_sessionState()
 
+
 with row1_col1:
     # INITIALIZE MAP
-    m = geemap.Map(plugin_Draw=True, draw_export=True, add_google_map=False)
+    m = geefmap.Map(plugin_Draw=True, draw_export=True, add_google_map=False)
     m.setCenter(76,22, st.session_state.zoom_level)
     m.add_basemap("HYBRID")
 
@@ -49,3 +50,4 @@ with row1_col1:
                 st.info("Set Processing Options to Proceed")
             
     m.to_streamlit(height=700, width=1000)
+    # 1440p monitor # (height=900, width=1350)
