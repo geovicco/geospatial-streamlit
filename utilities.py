@@ -191,7 +191,7 @@ def set_params():
         form = st.form(key='processing-params')
         fromDate = form.date_input('Start Date', date.today() - timedelta(days=61))
         toDate = form.date_input('End Date', date.today()-timedelta(days=1))
-        cloudCover = form.number_input(label="Set Cloud Cover Threshold (%)", min_value=0, max_value=100, value=, step=5)
+        cloudCover = form.number_input(label="Set Cloud Cover Threshold (%)", min_value=0, max_value=100, value=25, step=5)
         satellite = form.radio("", [
                 "Landsat 5",
                 "Landsat 7",
