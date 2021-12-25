@@ -152,6 +152,7 @@ def add_aoi_selector(mapObject):
                         zoomLevel = 11
                     else:
                         zoomLevel = 13
+                    print(area, zoomLevel)
                     mapObject.addLayer(ee_obj, {}, 'aoi')
                     mapObject.set_center(center_lon, center_lat, zoomLevel)
                     st.session_state["aoi"] = ee_obj
@@ -182,6 +183,7 @@ def add_aoi_selector(mapObject):
                         zoomLevel = 9
                     else:
                         zoomLevel = 13
+                    print(area, zoomLevel)
                     mapObject.addLayer(ee_obj, {}, 'aoi')
                     mapObject.set_center(center_lon, center_lat, zoomLevel)
                     st.session_state["aoi"] = ee_obj
