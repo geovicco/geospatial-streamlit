@@ -11,8 +11,8 @@ def initialize_sessionState():
         st.session_state["zoom_level"] = 4
     if st.session_state.get("aoi") is None:
         st.session_state["aoi"] = 'Not Selected'
-    if st.session_state.get("useNDVI") is None:
-        st.session_state["useNDVI"] = False
+    if st.session_state.get("cloudCover") is None:
+        st.session_state["cloudCover"] = 25
 
 
 def add_geocoder(mapObject):
@@ -191,7 +191,7 @@ def set_params():
         form = st.form(key='processing-params')
         fromDate = form.date_input('Start Date', date.today() - timedelta(days=61))
         toDate = form.date_input('End Date', date.today()-timedelta(days=1))
-        useNDVI = form.checkbox("Use NDVI", False)
+        cloudCover = form.number_input(label="Set Cloud Cover Threshold (%)", min_value=0, max_value=100, value=, step=5)
         satellite = form.radio("", [
                 "Landsat 5",
                 "Landsat 7",
@@ -208,7 +208,7 @@ def set_params():
         if submit:
             st.session_state['fromDate'] = fromDate
             st.session_state["toDate"] = toDate
-            st.session_state["useNDVI"] = useNDVI
+            st.session_state["cloudCover"] = cloudCover
             st.session_state['satellite'] = satellite
             
         return st.session_state
@@ -604,14 +604,15 @@ def showLST(mapObject, state):
     start = str(state.fromDate)
     end = str(state.toDate)
     aoi = state.aoi
-    useNDVI = state.useNDVI
+    cloudCover = state.cloudCover
     
-    LandsatLSTCol = getLSTCollection(satellite, start, end, aoi, useNDVI, cloudCover=25)
+    LandsatLSTCol = getLSTCollection(satellite, start, end, aoi, useNDVI, cloudCover)
     # Covert Landsat LST Image Collection to Image 
     # Sort by a cloud cover property, get the least cloudy image.
     # image = ee.Image(LandsatLSTCol.sort('CLOUD_COVER').first())
-    # Get Mosaic Image between Selected Data
-    image = LandsatLSTCol.qualityMosaic('LST')
+    
+    image = ee.Image(LandsatLSTCol.medina())
+    
     # Define Colormap for Visualization
     cmap1 = ['blue', 'cyan', 'green', 'yellow', 'red']
     
