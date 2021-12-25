@@ -636,29 +636,5 @@ def showLST(mapObject, state):
     caption = 'Land Surface Temperature (Celsius)'
     
     mapObject.add_colorbar(colors=cmap1, caption=caption, vmin=vmin, vmax=vmax)
-    st.session_state['lst_img'] = lst_img
-    return st.session_state
 
-def export(mapObject, state):
-  opt = state.export_opt
 
-  import os
-  # Set Directory where Output will be Saved
-  download_dir = os.path.join(os.path.expanduser('~'), 'Downloads')
-  if not os.path.exists(download_dir):
-      os.makedirs(download_dir)
-  html_file = os.path.join(download_dir, 'LST.html')
-  tiff_file = os.path.join(download_dir, 'LST.tif')
-
-  if opt == 'GeoTIFF':
-    st.write(f'Output File Location: {tiff_file}')
-    st.warning('This may take a few seconds to process!')
-    st.warning('Note: Output LST raster has temperature units in Kelvin.')
-    return geemap.ee_export_image(state.lst_img, filename=tiff_file, scale=90, region=state.aoi.geometry(), file_per_band=False)
-
-  elif opt == 'HTML': 
-    st.write(f'Output File Location: {html_file}')
-    return mapObject.to_html(outfile=html_file, width='100%', height='100%', title='Landsat LST Map')
-  
-  else:
-    st.write('Output Not Saved.')
