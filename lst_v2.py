@@ -42,7 +42,6 @@ with row1_col1:
                 try:
                     # Run Algorithm
                     ut.showLST(mapObject=m, state=sessionState)
-                    ut.export(mapObject=m, state=sessionState)
                 except KeyError:
                     st.warning("LST for selected dates could not be computed. Set longer time duration!")
             else:
