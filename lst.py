@@ -18,7 +18,6 @@ row1_col1, row1_col2 = st.columns([2, 1])
 
 ut.initialize_sessionState()
 
-
 with row1_col1:
     # INITIALIZE MAP
     m = geemap.Map(plugin_Draw=True, draw_export=True, add_google_map=False)
@@ -43,11 +42,10 @@ with row1_col1:
                 try:
                     # Run Algorithm
                     ut.showLST(mapObject=m, state=sessionState)
+                    ut.export(mapObject=m, state=sessionState)
                 except KeyError:
-                    # sessionState['FormSubmitter:processing-params-Submit'] = False
                     st.warning("LST for selected dates could not be computed. Set longer time duration!")
             else:
-                st.info("Define Processing Paramaters to Proceed")        
-
+                st.info("Set Processing Options to Proceed")
+            
     m.to_streamlit(height=700, width=1000)
-    # 1440p monitor # (height=900, width=1350)
