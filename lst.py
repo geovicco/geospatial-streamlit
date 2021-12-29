@@ -43,7 +43,7 @@ with row1_col1:
                     # Run Algorithm
                     ut.showLST(mapObject=m, state=sessionState)
                 except KeyError:
-                    st.warning("LST for selected dates could not be computed. Set longer time duration!")
+                    st.warning("LST could not be computed. Try again with different settings!")
             else:
                 st.info("Set Processing Options to Proceed")
             
