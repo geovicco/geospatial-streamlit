@@ -625,9 +625,9 @@ def showLST(mapObject, state):
     lst_img = image.select('LST').clip(aoi)
     rgb_bands = getBands_RGB(satellite)
     
-    lst_mean = gmap.image_stats(image, aoi, scale=100).getInfo()['mean']['LST'] 
-    lst_min = gmap.image_stats(image, aoi, scale=100).getInfo()['min']['LST']
-    lst_std = gmap.image_stats(image, aoi, scale=100).getInfo()['std']['LST']
+    lst_mean = gmap.image_stats(image, aoi, scale=1000).getInfo()['mean']['LST'] 
+    lst_min = gmap.image_stats(image, aoi, scale=1000).getInfo()['min']['LST']
+    lst_std = gmap.image_stats(image, aoi, scale=1000).getInfo()['std']['LST']
     
     mapObject.addLayer(image.multiply(0.0001).clip(aoi),{'bands': rgb_bands, 'min':0, 'max':0.3}, 'Natural Color RGB')
     mapObject.addLayer(lst_img,{'min':lst_min - 2.5*lst_std, 'max':lst_mean + 2.5*lst_std, 'palette':cmap1}, 'LST')
