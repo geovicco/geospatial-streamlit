@@ -10,7 +10,7 @@ def initialize_sessionState():
     if st.session_state.get("zoom_level") is None:
         st.session_state["zoom_level"] = 4
     if st.session_state.get("aoi") is None:
-        st.session_state["aoi"] = 'Not Selected'
+        st.session_state["aoi"] = ''
     if st.session_state.get("useNDVI") is None:
         st.session_state["useNDVI"] = True
 
@@ -87,17 +87,8 @@ def add_aoi_selector(mapObject):
                 pass
             else:
                 gdf = gpd.read_file(url_data)
-                st.session_state["aoi"] = geemap.geopandas_to_ee(gdf, geodesic=True)
-                ee_obj = st.session_state['aoi'] 
-                gdf['center'] = gdf.centroid
-                gdf['lon'] = gdf.center.apply(lambda p: p.x)
-                gdf['lat'] = gdf.center.apply(lambda p: p.y)
-                lon = gdf.lon.mean()
-                lat = gdf.lat.mean()
-                zoomLevel = 10
-                mapObject.addLayer(ee_obj, {}, 'AOI')
-                mapObject.set_center(lon, lat, zoomLevel)
-                st.session_state["aoi"] = ee_obj # Saving AOI to Session State
+                mapObject.add_gdf(gdf, zoom_to_layer=True, layer_name=f"{url_data.split('/')[-1].split('.')[0]}")
+                st.session_state["aoi"] = geemap.geopandas_to_ee(gdf, geodesic=True) # Saving AOI to Session State
         elif option == optionsList[0]:
             ee_asset_search = st.text_input("Search EarthEngine FeatureCollection Asset", "")
             ee_assets_from_search = geemap.search_ee_data(ee_asset_search)
@@ -115,81 +106,19 @@ def add_aoi_selector(mapObject):
             else:
                 st.info('Asset Not Found! Use a diffent keyword.')
         elif option == optionsList[2]:
-            uploaded_file = st.file_uploader(
-                    "Upload a GeoJSON or a Zipped Shapefile to use as an AOI.",
-                    type=["geojson", "zip"]
-                    )
+            uploaded_file = st.file_uploader("Upload a GeoJSON or a Zipped Shapefile to use as an AOI.", type=["geojson", "zip"])
             crs = {"init": "epsg:4326"}
-            
-            if uploaded_file != None:
-                file_ext = uploaded_file.name.split('.')[-1]
-                if file_ext == 'zip':
-                    # Get Path to the temp directory where all contents of the shapefile are located
-                    tempDirPath = uploaded_file_to_gdf(uploaded_file, crs)
-                    # Get the name of the shapefile
-                    shpName = uploaded_file.name.split('.zip')[0]
-                    import os
-                    # Read using geopandas
-                    gdf = gpd.read_file(os.path.join(tempDirPath, (shpName + '.shp')))
-                    
-                    st.session_state["aoi"] = geemap.geopandas_to_ee(gdf, geodesic=False)
-                    ee_obj = st.session_state['aoi']
-
-                    from shapely.geometry import Polygon, Point
-
-                    minx, miny, maxx, maxy = gdf.geometry.total_bounds
-                    gdf_bounds = gpd.GeoSeries({
-                        'geometry': Polygon([Point(minx, maxy), Point(maxx, maxy), Point(maxx, miny), Point(minx, miny)])
-                    }, crs="EPSG:4326")
-                    area = gdf_bounds.area.values[0]
-                    center = gdf_bounds.centroid
-                    center_lon = float(center.x); center_lat = float(center.y)
-                    
-                    if area > 5:
-                        zoomLevel = 8
-                    elif area > 3:
-                        zoomLevel = 10
-                    elif area > 0.1 and area < 0.5:
-                        zoomLevel = 11
-                    else:
-                        zoomLevel = 13
-                    
-                    # print(area, zoomLevel)
-                    mapObject.addLayer(ee_obj, {}, 'aoi')
-                    # mapObject.set_center(st.session_state.lon, st.session_state.lat, zoomLevel)
-                    mapObject.set_center(center_lon, center_lat, zoomLevel)
-                    st.session_state["aoi"] = ee_obj
-                elif uploaded_file is None:
-                    pass
-                else:
+            if uploaded_file is not None:
+                try:
                     gdf = uploaded_file_to_gdf(uploaded_file, crs)
-                    st.session_state["aoi"] = geemap.geopandas_to_ee(gdf, geodesic=False)
-                    ee_obj = st.session_state['aoi']
-                    from shapely.geometry import Polygon, Point
-
-                    minx, miny, maxx, maxy = gdf.geometry.total_bounds
-                    gdf_bounds = gpd.GeoSeries({
-                        'geometry': Polygon([Point(minx, maxy), Point(maxx, maxy), Point(maxx, miny), Point(minx, miny)])
-                    }, crs="EPSG:4326")
-
-                    area = gdf_bounds.area.values[0]
-                    center = gdf_bounds.centroid
-                    center_lon = float(center.x); center_lat = float(center.y)
-                    
-                    if area > 5:
-                        zoomLevel = 8
-                    elif area > 3:
-                        zoomLevel = 10
-                    elif area > 0.1 and area < 0.5:
-                        zoomLevel = 11
-                    elif area < 2 and area > 1:
-                        zoomLevel = 9
-                    else:
-                        zoomLevel = 13
-                    
-                    mapObject.addLayer(ee_obj, {}, 'aoi')
-                    mapObject.set_center(center_lon, center_lat, zoomLevel)
-                    st.session_state["aoi"] = ee_obj
+                    mapObject.add_gdf(gdf, zoom_to_layer=True, layer_name=f"{uploaded_file.name.split('.')[0]}")
+                    mapObject.zoom_to_gdf(gdf)
+                    st.session_state['aoi'] = geemap.geopandas_to_ee(gdf, geodesic=True)
+                except Exception as e:
+                    st.error(e)
+                    st.stop()
+            else:
+                st.info("Upload a GeoJSON or a Zipped Shapefile.")
     
 def set_params():
     with st.expander("Define Processing Parameters"):
@@ -603,6 +532,7 @@ def getBands_RGB(landsat):
     rgb_bands = collection_dict.get('RGB_BANDS').getInfo()
     return rgb_bands
 
+import json
 def showLST(mapObject, state): 
     # Get Parameters from State
     satellite = state.satellite
@@ -611,11 +541,9 @@ def showLST(mapObject, state):
     aoi = state.aoi
     cloudCover = state.cloudCover
     useNDVI = state.useNDVI
-    
+
     LandsatLSTCol = getLSTCollection(satellite, start, end, aoi, useNDVI, cloudCover)
     # Covert Landsat LST Image Collection to Image 
-    # Sort by a cloud cover property, get the least cloudy image.
-    # image = ee.Image(LandsatLSTCol.sort('CLOUD_COVER').first())
     
     image = ee.Image(LandsatLSTCol.qualityMosaic('LST'))
     
@@ -628,15 +556,30 @@ def showLST(mapObject, state):
     lst_mean = gmap.image_stats(image, aoi, scale=200).getInfo()['mean']['LST'] 
     lst_min = gmap.image_stats(image, aoi, scale=200).getInfo()['min']['LST']
     lst_std = gmap.image_stats(image, aoi, scale=200).getInfo()['std']['LST']
+
+    # Prepare visualization parameters for LST
+    lst_vis_params = {
+        'min': lst_min - 2.5*lst_std,
+        'max': lst_mean + 2.5*lst_std,
+        'palette': cmap1
+    }
     
     mapObject.addLayer(image.multiply(0.0001).clip(aoi),{'bands': rgb_bands, 'min':0, 'max':0.3}, 'Natural Color RGB')
-    mapObject.addLayer(lst_img,{'min':lst_min - 2.5*lst_std, 'max':lst_mean + 2.5*lst_std, 'palette':cmap1}, 'LST')
+    mapObject.addLayer(lst_img, lst_vis_params, 'LST')
+
+    mapObject.addLayer(lst_img, lst_vis_params, 'LST')
+
+    vmin = (lst_min - 2.5*lst_std) - 273.15; vmin = round(vmin, 2)
+    vmax = (lst_mean + 2.5*lst_std) - 273.15; vmax = round(vmax, 2)
     
-    vmin = (lst_min - 2.5*lst_std) - 273.15 
-    vmax = (lst_mean + 2.5*lst_std) - 273.15
-    vmin = round(vmin, 2); vmax = round(vmax, 2)
+    lst_colorbar_vis_params = {
+        'min': vmin,
+        'max': vmax,
+        'palette': cmap1
+    }
     caption = 'Land Surface Temperature (Celsius)'
-    
-    mapObject.add_colorbar(colors=cmap1, caption=caption, vmin=vmin, vmax=vmax)
+
+    # Add colorbar
+    mapObject.add_colorbar(vis_params=lst_colorbar_vis_params, label=caption)
     st.session_state['lst_img'] = lst_img
     return st.session_state

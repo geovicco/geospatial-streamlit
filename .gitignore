@@ -1,3 +1,4 @@
 
 *.mp4
 media/lst-kolkata-demo.gif
+__pycache__

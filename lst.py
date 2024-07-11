@@ -20,8 +20,7 @@ ut.initialize_sessionState()
 
 with row1_col1:
     # INITIALIZE MAP
-    m = geemap.Map(plugin_Draw=True, draw_export=True, add_google_map=False)
-    # m.setCenter(76,22, st.session_state.zoom_level)
+    m = geemap.Map(plugin_Draw=False, add_google_map=False)
     m.add_basemap("HYBRID")
 
     with row1_col2:
@@ -31,7 +30,7 @@ with row1_col1:
         # AOI SELECTION
         ut.add_aoi_selector(mapObject=m)
 
-        if st.session_state.aoi == "Not Selected":
+        if st.session_state.aoi is "":
             st.info("Select AOI to Proceed")
         else:
             # # SET PROCESSING PARAMETERS  
